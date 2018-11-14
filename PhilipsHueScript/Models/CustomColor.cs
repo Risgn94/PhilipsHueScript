@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Q42.HueApi.ColorConverters.HSB;
-
-namespace PhilipsHueScript.Models
+﻿namespace PhilipsHueScript.Models
 {
     public class CustomColor
     {

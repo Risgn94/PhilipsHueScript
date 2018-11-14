@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using Microsoft.VisualBasic.FileIO;
 using PhilipsHueScript.Models;
-using Q42.HueApi.ColorConverters.HSB;
 
 namespace PhilipsHueScript
 {
     public class LightningService
     {
-        public List<CustomColor> ReadCSVData(string pathToDatafile)
+        public List<CustomColor> ReadCSVData(string pathToDatafile, int seconds)
         {
             var returnList = new List<CustomColor>();
 
@@ -26,13 +25,24 @@ namespace PhilipsHueScript
                         int g = Convert.ToInt32(fields[2]); 
                         int b = Convert.ToInt32(fields[3]);
 
-                        returnList.Add(new CustomColor
+                        var customColor = new CustomColor
                         {
                             XyColor = ParseRGBToXY(r, g, b),
                             Brightness = Convert.ToInt32(fields[4]),
                             Saturation = Convert.ToInt32(fields[5]),
-                            Seconds = Convert.ToInt32(fields[6]),
-                        });
+                        };
+
+                        try
+                        {
+                            customColor.Seconds = Convert.ToInt32(fields[6]);
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("No \"second\" value was found. Using default value.");
+                            customColor.Seconds = Convert.ToInt32(seconds);
+                        }
+
+                        returnList.Add(customColor);
                     }
                     lineCounter++;
                 }
@@ -98,7 +108,5 @@ namespace PhilipsHueScript
                 Y = y
             };
         }
-
-
     }
 }

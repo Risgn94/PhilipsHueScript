@@ -2,5 +2,6 @@
   "IpAddress": "192.168.1.136",
   "RunIndefinitely":  false, 
   "PathToLightData": "LightConfig.csv",
-  "BridgeKey": "MzdoKVR3xY84-e-LzJ-gmPIcNCHatxn6LcnTw0C-"
+  "BridgeKey": "MzdoKVR3xY84-e-LzJ-gmPIcNCHatxn6LcnTw0C-",
+  "Seconds": "2"
 }

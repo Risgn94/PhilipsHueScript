@@ -12,8 +12,10 @@ namespace PhilipsHueScript
     {
         private static async Task Main(string[] args)
         {
+            var assemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
             Config config;
-            using (StreamReader r = new StreamReader("config.json"))
+            using (StreamReader r = new StreamReader(Path.Combine(assemblyPath,"config.json")))
             {
                 string json = r.ReadToEnd();
                 config = JsonConvert.DeserializeObject<Config>(json);
@@ -33,11 +35,10 @@ namespace PhilipsHueScript
             }
 
             var lightingService = new LightningService();
-            var lightningData = lightingService.ReadCSVData(config.PathToLightData);
+            var lightningData = lightingService.ReadCSVData(Path.Combine(assemblyPath,config.PathToLightData), config.Seconds);
 
             Console.WriteLine("Connecting to: " + config.IPAddress);
             ILocalHueClient client = new LocalHueClient(config.IPAddress);
-            //var client = "TST";
 
             if (client != null)
             {
@@ -50,24 +51,22 @@ namespace PhilipsHueScript
                     {
                         foreach (var color in lightningData)
                         {
-                            //TODO: Fix this -> Change float to double and test whether conversion from RGB to XY works
                             double[] colorCoordinates = {color.XyColor.X, color.XyColor.Y};
                             var colorCommand = new LightCommand
                             {
                                 ColorCoordinates = colorCoordinates,
-                                Saturation = color.Saturation
+                                Saturation = color.Saturation,
+                                Brightness = Convert.ToByte(color.Brightness)
                             };
 
                             Console.WriteLine(color.XyColor.X+";"+color.XyColor.Y);
 
                             await client.SendCommandAsync(colorCommand);
-                            Thread.Sleep(color.Seconds * 1000);
+                            Thread.Sleep(config.Seconds * 1000);
                         }
 
                         runIndefinitely = config.RunIndefinitely;
                     }
-                        
-                    
                 }
                 catch (Exception e)
                 {
